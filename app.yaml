@@ -1,0 +1,31 @@
+application: recipe-book
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: yes
+
+handlers:
+- url: /favicon\.ico
+  static_files: icon/favicon.ico
+  upload: icon/favicon\.ico
+  
+- url: /app
+  script: main.app
+  login: required
+  
+- url: /app/
+  static_files: app/index.html
+  upload: app/index\.html
+  #login: required #TODO: Enable?
+  
+- url: /app
+  static_dir: app
+  login: required
+
+- url: .*
+  script: main.app
+  login: required
+
+libraries:
+- name: webapp2
+  version: "2.5.2"

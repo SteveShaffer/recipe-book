@@ -1,0 +1,54 @@
+<p>
+  <button ng-click="toggleEditMode()">Edit Mode: {{ editMode }}</button>
+</p>
+<h1 ng-hide="editMode">{{ recipe.name }}</h1>
+<p><input class="h1" type="text" ng-model="recipe.name" placeholder="Name"
+       ng-show="editMode" ng-required /></p>
+
+<p ng-hide="editMode"><em>{{ recipe.description }}</em></p>
+<textarea ng-model="recipe.description" placeholder="Description"
+          ng-show="editMode"></textarea>
+
+<table ng-hide="editMode">
+  <tr>
+    <th>Makes</th>
+    <td>{{ recipe.makes.quantity }} {{ recipe.makes.unit }}</td>
+  </tr>
+  <tr>
+    <th>Serves</th>
+    <td>{{ recipe.serves.quantity }} People</td>
+  </tr>
+  <tr>
+    <th>Cooking Time</th>
+    <td>{{ recipe.cooking_time.quantity }} Minutes</td>
+  </tr>
+</table>
+<table ng-show="editMode">
+  <tr>
+    <th>Makes</th>
+    <td>
+      <input type="number" ng-model="recipe.makes.quantity" />
+    </td>
+    <td>
+      <input type="text" ng-model="recipe.makes.unit" />
+    </td>
+  </tr>
+  <tr>
+    <th>Serves</th>
+    <td>
+      <input type="number" ng-model="recipe.serves.quantity" />
+    </td>
+    <td>
+      People
+    </td>
+  </tr>
+  <tr>
+    <th>Cooking Time</th>
+    <td>
+      <input type="number" ng-model="recipe.cooking_time.quantity" />
+    </td>
+    <td>
+      Minutes
+    </td>
+  </tr>
+</table>

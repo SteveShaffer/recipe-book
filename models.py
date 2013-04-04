@@ -117,14 +117,17 @@ class Recipe(AppModel):
   
   def api_response_data(self):
     return {
+      'id': self.key.id() if self.key else None,
       'name': self.name,
       'description': self.description,
-      'makes': self.makes.api_message(as_dict=True),
-      'serves': self.serves.api_message(as_dict=True),
-      'cooking_time': self.cooking_time.api_message(as_dict=True),
+      'makes': self.makes.api_message(as_dict=True) if self.makes else {},
+      'serves': self.serves.api_message(as_dict=True) if self.serves else {},
+      'cooking_time': self.cooking_time.api_message(as_dict=True) if
+        self.cooking_time else {},
       'rating': self.rating,
       'tags': self.tags, #TODO: Does this work?
-      'ingredients': [ x.api_message(as_dict=True) for x in self.ingredients ],
+      'ingredients': [ x.api_message(as_dict=True) for x in self.ingredients ]
+        if 'ingredients' in self._properties else [],
       'instructions': self.instructions #TODO: Does this work?
     }
   

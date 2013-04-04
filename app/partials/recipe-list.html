@@ -1,1 +1,13 @@
 <h1>My Recipes</h1>
+
+<div class="card-table">
+  <div class="card" ng-repeat="recipe in recipes"
+       ng-click="gotoRecipe(recipe.id)">
+    <h3>{{ recipe.name }}</h3>
+  </div>
+  <div class="card">
+    <a href="#/recipes/new">
+      <h3>New</h3>
+    </a>
+  </div>
+</div>

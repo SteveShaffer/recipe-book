@@ -34,14 +34,15 @@ class LogoutHandler(webapp2.RequestHandler):
 #----API----#
 
 class ApiHandler(webapp2.RequestHandler):
-  
+
   def write_json(self, value, convert=False):
     self.response.headers['Content-Type'] = 'application/json'
     if convert:
       message = json.dumps(value)
     else:
       message = value
-    self.response.out.write(value)
+    self.response.out.write(message)
+
 class AccountHandler(ApiHandler):
 
   model = models.Account
@@ -63,8 +64,8 @@ class RecipeListHandler(ApiHandler):
   
   #NEW Recipe
   def post(self):
-    message = self.request.body
-    obj = self.model.create_from_api_message(json.loads(message))
+    message = json.loads(self.request.body)
+    obj = self.model.create_from_api_message(message)
     self.write_json(obj.api_message()) #TODO: Add Location header?
                                        #      perform redirect?
 
@@ -73,19 +74,19 @@ class RecipeHandler(ApiHandler):
   model = models.Recipe
   
   #READ Recipe
-  def get(self, id):
-    self.write_json(self.model.get_by_id(int(id)).api_message())
+  def get(self, recipe_id):
+    self.write_json(self.model.get_by_id(int(recipe_id)).api_message())
   
   #UPDATE Recipe
-  def post(self, id):
-    message = self.request.body
-    obj = self.model.get_by_id(int(id))
-    obj.update_from_api_message(json.loads(message))
+  def post(self, recipe_id):
+    message = json.loads(self.request.body)
+    obj = self.model.get_by_id(int(recipe_id))
+    obj.update_from_api_message(message)
     self.write_json(obj.api_message())
     
   #DELETE Recipe
-  def delete(self, id):
-    models.Recipe.delete(int(id))
+  def delete(self, recipe_id):
+    models.Recipe.delete(int(recipe_id))
     self.response.set_status(204)
 
 app = webapp2.WSGIApplication([

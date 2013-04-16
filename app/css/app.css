@@ -1,41 +1,20 @@
 /* app css stylesheet */
 
-body {
-  font-family: sans-serif;
+#content {
+  padding: 60px 20px 20px 20px;
+}
+
+/* Bootstrap why-did-you-put-the-navbar-to-static-on-phones fix */
+@media screen and (max-width: 768px) {
+  .navbar-fixed-top {
+    position: fixed;
+  }
 }
 
 input.h1 {
-  font-size: 2em;
+  font-size: 3em;
   font-weight: bold;
-}
-
-.menu {
-  list-style: none;
-  border-bottom: 0.1em solid black;
-  margin-bottom: 2em;
-  padding: 0 0 0.5em;
-}
-
-.menu:before {
-  content: "[";
-}
-
-.menu:after {
-  content: "]";
-}
-
-.menu > li {
-  display: inline;
-}
-
-.menu > li:before {
-  content: "|";
-  padding-right: 0.3em;
-}
-
-.menu > li:nth-child(1):before {
-  content: "";
-  padding: 0;
+  height: 1.5em;
 }
 
 .card-table {
@@ -43,10 +22,16 @@ input.h1 {
 }
 
 .card {
+  margin: 10px;
   width: 200px;
   height: 200px;
   display: inline-block;
   top: 0;
   left: 0;
   border: thin solid #333;
+}
+
+.edit-controls {
+  margin-top: 15px;
+  margin-bottom: 15px;
 }

@@ -5,7 +5,7 @@
 }
 
 /* Bootstrap why-did-you-put-the-navbar-to-static-on-phones fix */
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 979px) {
   .navbar-fixed-top {
     position: fixed;
   }

@@ -1,10 +1,11 @@
+<!--suppress HtmlFormInputWithoutLabel -->
 <form ng-submit="saveRecipe()">
   <div class="row-fluid">
     <div class="span9">
       <h1 ng-hide="editMode">{{ recipe.name }}</h1>
       <p>
         <input class="h1 span12" type="text" ng-model="recipe.name" placeholder="Name"
-               ng-show="editMode" ng-required />
+               ng-show="editMode" required />
       </p>
     </div>
     <div class="span3">
@@ -60,16 +61,19 @@
           <tr>
             <th class="span4">Makes</th>
             <td class="span4">
-              <input type="number" ng-model="recipe.makes.quantity" />
+              <input type="number" class="span12"
+                     ng-model="recipe.makes.quantity"/>
             </td>
             <td class="span4">
-              <input type="text" ng-model="recipe.makes.unit" />
+              <input type="text" class="span12"
+                     ng-model="recipe.makes.unit" />
             </td>
           </tr>
           <tr>
             <th class="span4">Serves</th>
             <td class="span4">
-              <input type="number" ng-model="recipe.serves.quantity" />
+              <input type="number" class="span12"
+                     ng-model="recipe.serves.quantity"/>
             </td>
             <td class="span4">
               People
@@ -78,7 +82,8 @@
           <tr>
             <th class="span4">Cooking Time</th>
             <td class="span4">
-              <input type="number" ng-model="recipe.cooking_time.quantity" />
+              <input type="number" class="span12"
+                     ng-model="recipe.cooking_time.quantity" />
             </td>
             <td class="span4">
               Minutes
@@ -86,6 +91,24 @@
           </tr>
         </tbody>
       </table>
+      <h2>Ingredients</h2>
+      <ol>
+        <li ng-hide="editMode" ng-repeat="ingredient in recipe.ingredients">
+          {{ ingredient.text }} <!--TODO: Do we need to make this available
+          to be dynamic on the client side as well?  If so,
+          we probably need to do some JS library work here-->
+        </li>
+        <li ng-show="editMode" ng-repeat="ingredient in recipe.ingredients">
+          <input type="number" class="span2" ng-model="ingredient.quantity" />
+          <input type="text" class="span4" ng-model="ingredient.unit" />
+          <input type="text" class="span6" ng-model="ingredient.description" />
+        </li>
+        <li ng-show="editMode">
+          <a ng-click="addIngredient()">
+            <i class="icon-plus-sign"></i> New...
+          </a>
+        </li>
+      </ol>
     </div>
     <div class="span6">
       <h2>Instructions</h2>
@@ -94,7 +117,8 @@
           {{ instruction.description }}
         </li>
         <li ng-show="editMode" ng-repeat="instruction in recipe.instructions">
-          <textarea ng-model="instruction.description"></textarea>
+          <textarea class="span12" ng-model="instruction.description">
+          </textarea>
         </li>
         <li ng-show="editMode">
           <a ng-click="addInstruction()">

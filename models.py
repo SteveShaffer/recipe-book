@@ -145,9 +145,9 @@ class Ingredient(Measure):
       'quantity': self.quantity,
       'unit': self.unit,
       'description': self.description,
-      'text': ' '.join([ x for x in [ self.quantity,
-                                      self.unit,
-                                      self.description] if x ])
+      'text': ' '.join([ str(x) for x in [self.quantity,
+                                          self.unit,
+                                          self.description] if x ])
     }
   
   def process_api_message(self, message):

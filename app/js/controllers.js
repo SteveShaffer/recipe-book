@@ -12,8 +12,10 @@ function NavbarCtrl($scope, User) {
 }
 
 function UserDetailCtrl($scope, User) {
+  //TODO: Loading
   $scope.user = User.get(); //TODO: What if user is not logged in?
   $scope.saveUser = function() {
+    //TODO: Loading
     $scope.user.$save();
   }
 }
@@ -62,7 +64,10 @@ function RecipeDetailCtrl($scope, Recipe, $routeParams, $location) {
     })
   };
   $scope.addInstruction = function() {
-    $scope.recipe.instructions.push({ 'description': '' }); //TODO: Set focus to just-added instruction
+    $scope.recipe.instructions.push({}); //TODO: Set focus to just-added instruction
+  };
+  $scope.addIngredient = function() {
+    $scope.recipe.ingredients.push({}); //TODO: Set focus to just-added ingredient
   }
 }
 

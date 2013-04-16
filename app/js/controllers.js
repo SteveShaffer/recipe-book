@@ -7,6 +7,10 @@ function HomeCtrl() {
   
 }
 
+function UserDetailCtrl($scope, User) {
+  $scope.user = User.query(); //TODO: What if user is not logged in?
+}
+
 function RecipeListCtrl($scope, Recipe) {
   $scope.recipes = Recipe.query();
 }

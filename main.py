@@ -22,6 +22,14 @@ import models
 class MainPageRedirectHandler(webapp2.RequestHandler):
   def get(self):
     self.redirect('/app/')
+
+class LoginHandler(webapp2.RequestHandler):
+  def get(self):
+    self.redirect(models.Account.get_login_url())
+
+class LogoutHandler(webapp2.RequestHandler):
+  def get(self):
+    self.redirect(models.Account.get_logout_url())
     
 #----API----#
 
@@ -34,6 +42,17 @@ class ApiHandler(webapp2.RequestHandler):
     else:
       message = value
     self.response.out.write(value)
+class AccountHandler(ApiHandler):
+
+  model = models.Account
+
+  def get(self):
+    self.write_json(self.model.get_for_current_user().api_message())
+
+  def post(self):
+    message = json.loads(self.request.body)
+    obj = self.model.update_from_api_message(message)
+    self.write_json(obj.api_message())
     
 class RecipeListHandler(ApiHandler):
   
@@ -72,6 +91,8 @@ class RecipeHandler(ApiHandler):
 app = webapp2.WSGIApplication([
   ('/', MainPageRedirectHandler),
   ('/app', MainPageRedirectHandler),
+  ('/login', LoginHandler),
+  ('/logout', LogoutHandler),
   ('/recipes/?', RecipeListHandler),
   ('/recipes/(.*)/?', RecipeHandler)
 ], debug=True)

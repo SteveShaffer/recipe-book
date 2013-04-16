@@ -70,11 +70,46 @@ class AppModel(ndb.Model):
 
 class Account(AppModel):
   #Key: User ID
+
+  name = ndb.StringProperty()
+  user = ndb.UserProperty(auto_current_user_add=True)
   
   @classmethod
   def get_for_current_user(cls):
+    """Returns the current user's account (and creates it if it doesn't exist)
+
+
+    :return: The current user's account model from the datastore
+    """
     return ndb.Model.get_or_insert(users.get_current_user().user_id())
-  
+
+  @classmethod
+  def get_login_url(cls, destination='/'):
+    """Returns a URL that will send the user to a login page
+
+    :param destination: URL the user should be redirected to after logging in
+    :return: URL to redirect the user's browser to in order to log the user in
+    """
+    return users.create_login_url(destination)
+
+  @classmethod
+  def get_logout_url(cls, destination='/'):
+    """Returns a URL that will log the current user out
+
+    :param destination: URL the user should be redirected to after logging out
+    :return: URL to redirect the user's browser to in order to log the user out
+    """
+    return users.create_logout_url(destination)
+
+  def api_response_data(self):
+    return {
+      'name': self.name,
+      'email': self.user.email()
+    }
+
+  def process_api_message(self, message):
+    if 'name' in message: self.name = message['name']
+    self.put()
   #TODO: Continue implementing?
 
 class Measure(AppModel):
@@ -110,9 +145,9 @@ class Ingredient(Measure):
       'quantity': self.quantity,
       'unit': self.unit,
       'description': self.description,
-      'text': ' '.join([ x for x in [self.quantity,
-                                     self.unit,
-                                     self.description] if x ])
+      'text': ' '.join([ x for x in [ self.quantity,
+                                      self.unit,
+                                      self.description] if x ])
     }
   
   def process_api_message(self, message):
@@ -137,7 +172,7 @@ class Recipe(AppModel):
   cooking_time = ndb.StructuredProperty(Measure) #unit='Minutes' #TODO: Implement somehow
   rating = ndb.FloatProperty(verbose_name='Rating')
   tags = ndb.StructuredProperty(Tag, repeated=True, verbose_name='Tags')
-  ingridients = ndb.StructuredProperty(Ingredient, repeated=True,
+  ingredients = ndb.StructuredProperty(Ingredient, repeated=True,
                                        verbose_name='Ingredients')
   instructions = ndb.StructuredProperty(Instruction, repeated=True,
                                         verbose_name='Instructions')
@@ -181,8 +216,8 @@ class Recipe(AppModel):
     self.put()
     
   @classmethod
-  def delete(self, id):
-    ndb.Key('Recipe', id).delete()
+  def delete(cls, recipe_id):
+    ndb.Key('Recipe', recipe_id).delete()
   
 class ShoppingList(AppModel):
   name = ndb.StringProperty(default='My Shopping List', verbose_name='Name')

@@ -35,6 +35,10 @@
           <li><a href="#/recipes">My Recipes</a></li>
           <li><a href="#/shopping">My Shopping List</a></li>
         </ul>
+
+        <div class="pull-right" ng-controller="UserDetailCtrl">
+          <a href="#/user">{{ user.name }}</a>
+        </div>
         
         <!--TODO: Use someday?
         <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">

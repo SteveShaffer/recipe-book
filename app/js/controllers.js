@@ -7,8 +7,15 @@ function HomeCtrl() {
   
 }
 
+function NavbarCtrl($scope, User) {
+  $scope.user = User.get(); //TODO: What if user is not logged in?
+}
+
 function UserDetailCtrl($scope, User) {
-  $scope.user = User.query(); //TODO: What if user is not logged in?
+  $scope.user = User.get(); //TODO: What if user is not logged in?
+  $scope.saveUser = function() {
+    $scope.user.$save();
+  }
 }
 
 function RecipeListCtrl($scope, Recipe) {

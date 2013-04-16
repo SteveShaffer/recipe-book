@@ -52,7 +52,7 @@ class AccountHandler(ApiHandler):
 
   def post(self):
     message = json.loads(self.request.body)
-    obj = self.model.update_from_api_message(message)
+    obj = self.model.get_for_current_user().update_from_api_message(message)
     self.write_json(obj.api_message())
     
 class RecipeListHandler(ApiHandler):
@@ -94,6 +94,7 @@ app = webapp2.WSGIApplication([
   ('/app', MainPageRedirectHandler),
   ('/login', LoginHandler),
   ('/logout', LogoutHandler),
+  ('/user', AccountHandler),
   ('/recipes/?', RecipeListHandler),
   ('/recipes/(.*)/?', RecipeHandler)
 ], debug=True)

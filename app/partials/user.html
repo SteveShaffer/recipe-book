@@ -1,0 +1,8 @@
+<h1>{{ user.name }} <small>{{ user.email }}</small></h1>
+
+<form ng-submit="saveUser()">
+  <label>Name</label><input ng-model="user.name" />
+  <button class="btn" type="submit">Save</button>
+</form>
+
+<a href="/logout" class="btn btn-primary">Logout</a>

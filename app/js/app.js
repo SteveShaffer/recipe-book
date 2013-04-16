@@ -6,7 +6,8 @@ angular.module('recipeBook', ['recipeBook.filters', 'recipeBook.services', 'reci
   .config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
     $routeProvider
       .when('/home', {templateUrl: 'partials/home.html', controller: HomeCtrl})
-      
+      .when('/user', {templateUrl: 'partials/user.html', controller: UserDetailCtrl})
+
       .when('/recipes', { templateUrl: 'partials/recipe-list.html',
                           controller: RecipeListCtrl})
       .when('/recipes/:recipeId', { templateUrl: 'partials/recipe-detail.html',

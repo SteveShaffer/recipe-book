@@ -81,7 +81,7 @@ class Account(AppModel):
 
     :return: The current user's account model from the datastore
     """
-    return ndb.Model.get_or_insert(users.get_current_user().user_id())
+    return cls.get_or_insert(users.get_current_user().user_id())
 
   @classmethod
   def get_login_url(cls, destination='/'):
@@ -102,8 +102,9 @@ class Account(AppModel):
     return users.create_logout_url(destination)
 
   def api_response_data(self):
+    name = self.name if self.name else self.user.nickname()
     return {
-      'name': self.name,
+      'name': name,
       'email': self.user.email()
     }
 

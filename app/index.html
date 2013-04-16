@@ -26,7 +26,7 @@
     <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
   <![endif]-->
   
-  <div class="navbar navbar-fixed-top">
+  <div class="navbar navbar-fixed-top" ng-controller="NavbarCtrl">
     <div class="navbar-inner">
       <div class="container-fluid">
         <a class="brand" href="/">Recipe Book</a>
@@ -36,9 +36,9 @@
           <li><a href="#/shopping">My Shopping List</a></li>
         </ul>
 
-        <div class="pull-right" ng-controller="UserDetailCtrl">
+        <p class="navbar-text pull-right">
           <a href="#/user">{{ user.name }}</a>
-        </div>
+        </p>
         
         <!--TODO: Use someday?
         <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">

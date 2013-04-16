@@ -135,8 +135,7 @@ class Tag(AppModel):
     return { 'description': self.description }
   
   def process_api_message(self, message):
-    #TODO: Implement (and then use below)
-    pass
+    if 'description' in message: self.description = message['description']
 
 class Ingredient(Measure):
   description = ndb.StringProperty(verbose_name='Description')
@@ -152,18 +151,19 @@ class Ingredient(Measure):
     }
   
   def process_api_message(self, message):
-    #TODO: Implement (and then use below)
-    pass
+    if 'quantity' in message: self.quantity = message['quantity']
+    if 'unit' in message: self.unit = message['unit']
+    if 'description' in message: self.description = message['description']
   
 class Instruction(AppModel):
   description = ndb.StringProperty(verbose_name='Description')
+  #TODO: Photo
   
   def api_response_data(self):
     return { 'description': self.description }
   
   def process_api_message(self, message):
-    #TODO: Implement (and then use below)
-    pass
+    if 'description' in message: self.description = message['description']
 
 class Recipe(AppModel):
   name = ndb.StringProperty(default='New Recipe', verbose_name='Name')
@@ -177,18 +177,22 @@ class Recipe(AppModel):
                                        verbose_name='Ingredients')
   instructions = ndb.StructuredProperty(Instruction, repeated=True,
                                         verbose_name='Instructions')
+  #TODO: Photos
   
   def api_response_data(self):
     return {
       'id': self.key.id() if self.key else None,
       'name': self.name,
       'description': self.description,
-      'makes': self.makes.api_message(as_dict=True) if self.makes else {},
-      'serves': self.serves.api_message(as_dict=True) if self.serves else {},
-      'cooking_time': self.cooking_time.api_message(as_dict=True)
-        if self.cooking_time else {},
+      'makes': self.makes.api_message(as_dict=True),
+        #TODO: Put back? #if self.makes else {},
+      'serves': self.serves.api_message(as_dict=True),
+        #TODO: Put back? #if self.serves else {},
+      'cooking_time': self.cooking_time.api_message(as_dict=True),
+        #TODO: Put back? #if self.cooking_time else {}
       'rating': self.rating,
-      'tags': [ x.api_message(as_dict=True) for x in self.tags ],
+      'tags': [ x.api_message(as_dict=True) for x in self.tags ]
+        if 'tags' in self._properties else [],
       'ingredients': [ x.api_message(as_dict=True) for x in self.ingredients ]
         if 'ingredients' in self._properties else [],
       'instructions': [ x.api_message(as_dict=True)
@@ -204,9 +208,13 @@ class Recipe(AppModel):
     if 'serves' in message:
       self.serves = Measure.create_from_api_message(message['serves'])
     if 'cooking_time' in message:
-      self.cooking_time = Measure.create_from_api_message(message['cooking_time'])
+      self.cooking_time = Measure.create_from_api_message(
+        message['cooking_time']
+      )
     if 'rating' in message: self.rating = message['rating']
-    #if 'tags' in message: self.tags = message['tags'] #TODO: Reimplement
+    if 'tags' in message:
+      self.tags = [ Tag.create_from_api_message(x)
+                    for x in message['tags'] ]
     if 'ingredients' in message:
       self.ingredients = [ Ingredient.create_from_api_message(x)
                            for x in message['ingredients'] ]

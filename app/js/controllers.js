@@ -23,12 +23,16 @@ function RecipeListCtrl($scope, Recipe) {
 }
 
 function RecipeDetailCtrl($scope, Recipe, $routeParams, $location) {
+  //TODO: Loading...
   if ($routeParams.recipeId.toLowerCase() == 'new') {
     $scope.recipe = new Recipe();
+    $scope.recipe.instructions = [];
+    $scope.recipe.ingredients = [];
     $scope.editMode = true;
   } else {
     $scope.recipe = Recipe.get({ recipeId: $routeParams.recipeId });
   }
+
   $scope.toggleEditMode = function() {
     $scope.editMode = !$scope.editMode;
   };
@@ -43,20 +47,22 @@ function RecipeDetailCtrl($scope, Recipe, $routeParams, $location) {
     } else {
       $location.path('/recipes');
     }
-  }
+  };
   $scope.saveRecipe = function() {
+    //TODO: Loading...
     $scope.recipe.$save(function() {
       $scope.editMode = false;
       $location.path('/recipes/' + $scope.recipe.id);
     });
   };
   $scope.deleteRecipe = function() {
+    //TODO: Loading...
     $scope.recipe.$delete(function() {
       $location.path('/recipes'); //TODO: Recipe list is not reloading for some reason
     })
-  }
+  };
   $scope.addInstruction = function() {
-    $scope.recipe.instructions.push({ 'description': '' });
+    $scope.recipe.instructions.push({ 'description': '' }); //TODO: Set focus to just-added instruction
   }
 }
 

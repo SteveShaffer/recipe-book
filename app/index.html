@@ -29,15 +29,34 @@
   <div class="navbar navbar-fixed-top" ng-controller="NavbarCtrl">
     <div class="navbar-inner">
       <div class="container-fluid">
-        <a class="brand" href="/">Recipe Book</a>
+        <a class="brand" href="/">
+          <!--TODO: Something's still going wrong
+          with the size of the brand and the username on phones.  It's pushing
+          off the screen due to margins or something-->
+          <span class="hidden-phone">Recipe Book</span>
+          <span class="visible-phone">RB</span>
+        </a>
         
         <ul class="nav">
-          <li><a href="#/recipes">My Recipes</a></li>
-          <li><a href="#/shopping">My Shopping List</a></li>
+          <li>
+            <a href="#/recipes">
+              <span class="hidden-phone">My Recipes</span>
+              <span class="visible-phone">Recipes</span>
+            </a>
+          </li>
+          <li>
+            <a href="#/shopping">
+              <span class="hidden-phone">My Shopping List</span>
+              <span class="visible-phone">Shopping</span>
+            </a>
+          </li>
         </ul>
 
         <p class="navbar-text pull-right">
-          <a href="#/user">{{ user.name }}</a>
+          <a href="#/user">
+            <span class="hidden-phone">{{ user.name }}</span>
+            <span class="visible-phone">Me</span>
+          </a>
         </p>
         
         <!--TODO: Use someday?

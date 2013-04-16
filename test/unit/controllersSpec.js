@@ -2,6 +2,8 @@
 
 /* jasmine specs for controllers go here */
 
+//TODO: Start writing tests.
+
 describe('MyCtrl1', function(){
   var myCtrl1;
 

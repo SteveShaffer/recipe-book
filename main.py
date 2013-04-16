@@ -44,8 +44,8 @@ class RecipeListHandler(ApiHandler):
   
   #NEW Recipe
   def post(self):
-    message = self.request.body()
-    obj = self.model.create_from_api_message(message)
+    message = self.request.body
+    obj = self.model.create_from_api_message(json.loads(message))
     self.write_json(obj.api_message()) #TODO: Add Location header?
                                        #      perform redirect?
 
@@ -54,18 +54,19 @@ class RecipeHandler(ApiHandler):
   model = models.Recipe
   
   #READ Recipe
-  def get(self, id): self.write_json(self.model.get_by_id(id).api_message())
+  def get(self, id):
+    self.write_json(self.model.get_by_id(int(id)).api_message())
   
   #UPDATE Recipe
   def post(self, id):
-    message = self.request.body()
-    obj = self.model.get_by_id(id)
-    obj.update_from_api_message(message)
+    message = self.request.body
+    obj = self.model.get_by_id(int(id))
+    obj.update_from_api_message(json.loads(message))
     self.write_json(obj.api_message())
     
   #DELETE Recipe
   def delete(self, id):
-    self.model.get_by_id(id).delete()
+    models.Recipe.delete(int(id))
     self.response.set_status(204)
 
 app = webapp2.WSGIApplication([

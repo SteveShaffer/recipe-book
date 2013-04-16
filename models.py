@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import json
+import logging
 
 from google.appengine.ext import ndb
 from google.appengine.api import users
@@ -56,12 +57,9 @@ class AppModel(ndb.Model):
   
   @classmethod
   def create_from_api_message(cls, message):
-    try:
-      obj = cls()
-      obj.process_api_message(message)
-      return obj
-    except:
-      return None
+    obj = cls() #NOTE: Assumes no required attributes
+    obj.process_api_message(message)
+    return obj
     
   def update_from_api_message(self, message):
     try:
@@ -87,8 +85,22 @@ class Measure(AppModel):
     return {
       'quantity': self.quantity,
       'unit': self.unit,
-      'text': ' '.join([self.quantity, self.unit])
+      'text': ' '.join([str(self.quantity), str(self.unit)])
     }
+  
+  def process_api_message(self, message):
+    if 'quantity' in message: self.quantity = message['quantity']
+    if 'unit' in message: self.unit = message['unit']
+  
+class Tag(AppModel):
+  description = ndb.StringProperty(verbose_name='Description')
+  
+  def api_response_data(self):
+    return { 'description': self.description }
+  
+  def process_api_message(self, message):
+    #TODO: Implement (and then use below)
+    pass
 
 class Ingredient(Measure):
   description = ndb.StringProperty(verbose_name='Description')
@@ -102,6 +114,20 @@ class Ingredient(Measure):
                                      self.unit,
                                      self.description] if x ])
     }
+  
+  def process_api_message(self, message):
+    #TODO: Implement (and then use below)
+    pass
+  
+class Instruction(AppModel):
+  description = ndb.StringProperty(verbose_name='Description')
+  
+  def api_response_data(self):
+    return { 'description': self.description }
+  
+  def process_api_message(self, message):
+    #TODO: Implement (and then use below)
+    pass
 
 class Recipe(AppModel):
   name = ndb.StringProperty(default='New Recipe', verbose_name='Name')
@@ -110,10 +136,11 @@ class Recipe(AppModel):
   serves = ndb.StructuredProperty(Measure) #unit='People' #TODO: Implement somehow
   cooking_time = ndb.StructuredProperty(Measure) #unit='Minutes' #TODO: Implement somehow
   rating = ndb.FloatProperty(verbose_name='Rating')
-  tags = ndb.StringProperty(repeated=True, verbose_name='Tags')
+  tags = ndb.StructuredProperty(Tag, repeated=True, verbose_name='Tags')
   ingridients = ndb.StructuredProperty(Ingredient, repeated=True,
                                        verbose_name='Ingredients')
-  instructions = ndb.StringProperty(repeated=True, verbose_name='Instructions')
+  instructions = ndb.StructuredProperty(Instruction, repeated=True,
+                                        verbose_name='Instructions')
   
   def api_response_data(self):
     return {
@@ -122,39 +149,40 @@ class Recipe(AppModel):
       'description': self.description,
       'makes': self.makes.api_message(as_dict=True) if self.makes else {},
       'serves': self.serves.api_message(as_dict=True) if self.serves else {},
-      'cooking_time': self.cooking_time.api_message(as_dict=True) if
-        self.cooking_time else {},
+      'cooking_time': self.cooking_time.api_message(as_dict=True)
+        if self.cooking_time else {},
       'rating': self.rating,
-      'tags': self.tags, #TODO: Does this work?
+      'tags': [ x.api_message(as_dict=True) for x in self.tags ],
       'ingredients': [ x.api_message(as_dict=True) for x in self.ingredients ]
         if 'ingredients' in self._properties else [],
-      'instructions': self.instructions #TODO: Does this work?
+      'instructions': [ x.api_message(as_dict=True)
+                        for x in self.instructions ]
+        if 'instructions' in self._properties else []
     }
   
   def process_api_message(self, message):
-    message = json.loads(message)
     if 'name' in message: self.name = message['name']
-    if 'description' in mesage: self.description = message['description']
-    if 'makes' in message: self.makes = Measure(
-      quantity=message['makes']['quantity'], unit=message['makes']['unit']
-    ) #TODO: Use Measure.process_api_message()? (and for other ones below)
-    if 'serves' in message: self.serves = Measure(
-      quantity=message['serves']['quantity']
-    )
-    if 'cooking_time' in message: self.cooking_time = Measure(
-      quantity=message['cooking_time']['quantity']
-    )
+    if 'description' in message: self.description = message['description']
+    if 'makes' in message:
+      self.makes = Measure.create_from_api_message(message['makes'])
+    if 'serves' in message:
+      self.serves = Measure.create_from_api_message(message['serves'])
+    if 'cooking_time' in message:
+      self.cooking_time = Measure.create_from_api_message(message['cooking_time'])
     if 'rating' in message: self.rating = message['rating']
-    if 'tags' in message: self.tags = message['tags']
+    #if 'tags' in message: self.tags = message['tags'] #TODO: Reimplement
     if 'ingredients' in message:
-      self.ingredients = [
-        Ingredient(quantity=x.quantity,
-                   unit=x.unit,
-                   description = x.description)
-        for x in message['ingredients']
-      ]
-    if 'instructions' in message: self.instructions = message['instructions']
+      self.ingredients = [ Ingredient.create_from_api_message(x)
+                           for x in message['ingredients'] ]
+    if 'instructions' in message:
+      self.instructions = [ Instruction.create_from_api_message(x)
+                            for x in message['instructions'] ]
+    logging.info('****recipe: ' + str(self))
     self.put()
+    
+  @classmethod
+  def delete(self, id):
+    ndb.Key('Recipe', id).delete()
   
 class ShoppingList(AppModel):
   name = ndb.StringProperty(default='My Shopping List', verbose_name='Name')
